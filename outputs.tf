@@ -4,6 +4,6 @@ output "ids" {
 }
 
 output "names" {
-  description = "List of IDs of instances"
+  description = "List of instances name"
   value       = "${openstack_compute_instance_v2.this.*.name}"
 }

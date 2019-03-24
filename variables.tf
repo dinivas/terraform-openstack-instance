@@ -1,4 +1,4 @@
-variable "compute_name" {
+variable "instance_name" {
   type        = "string"
   description = "The name (prefix) of the compute instance to create."
 }
@@ -22,4 +22,16 @@ variable "flavor_name" {
 variable "keypair" {
   type        = "string"
   description = "The name of the keypair to use"
+}
+
+variable "network_name" {
+  type        = "string"
+  default     = ""
+  description = "The name of the network to attach instance to"
+}
+
+variable "security_group_names" {
+  type        = "list"
+  default     = ["default"]
+  description = "The name of the network to attach instance to"
 }

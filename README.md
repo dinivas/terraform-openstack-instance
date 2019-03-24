@@ -1,10 +1,24 @@
-# My new created Terraform module
+# Terraform module for Openstack Instance
 
-Introduce your module briefly.
+This module create an Openstack instance
 
 ## Usage
 
-Provide the sample code to use your module.
+```
+resource "openstack_compute_keypair_v2" "keypair" {
+  name = "my-keypair"
+}
+module "compute" {
+  source               = "shepherdcloud/instance/openstack"
+  instance_name        = "BLUE"
+  instance_count       = 2
+  image_name           = "cirros"
+  flavor_name          = "m1.tiny"
+  keypair              = "${openstack_compute_keypair_v2.keypair.name}"
+  network_name         = "my-network"
+  security_group_names = ["default"]
+}
+```
 
 ## Scenarios
 
