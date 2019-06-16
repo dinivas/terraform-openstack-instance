@@ -24,14 +24,24 @@ variable "keypair" {
   description = "The name of the keypair to use"
 }
 
-variable "network_name" {
-  type        = "string"
-  default     = ""
-  description = "The name of the network to attach instance to"
+variable "network_ids" {
+  type        = list
+  default     = []
+  description = "IDs of the networks to attach instance to"
 }
 
-variable "security_group_names" {
-  type        = "list"
-  default     = ["default"]
-  description = "The name of the network to attach instance to"
+variable "subnet_ids" {
+  type        = list
+  default     = []
+  description = "IDs of the networks subnet to attach instance to"
+}
+
+variable "security_group_name" {
+  type= "string"
+}
+
+variable "security_group_rules" {
+  type        = list(map(any))
+  default     = []
+  description = "The definition os security groups to associate to instance. Only one is allowed"
 }
