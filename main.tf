@@ -8,21 +8,21 @@ data "openstack_images_image_v2" "this" {
 }
 
 resource "openstack_networking_secgroup_v2" "this" {
-  count = "${var.security_group_name != "" ? 1 : 0}"
+  count = "${var.instance_security_group_name != "" ? 1 : 0}"
 
-  name        = "${var.security_group_name}"
-  description = "${format("%s %s", var.security_group_name, "security group")}"
+  name        = "${var.instance_security_group_name}"
+  description = "${format("Instance %s %s %s", var.instance_name, var.instance_security_group_name, "security group")}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "this" {
-  count = "${length(var.security_group_rules)}"
+  count = "${ (var.instance_security_group_name != "" && length(var.instance_security_group_rules) > 0) ? 1 : 0}"
 
-  port_range_min    = "${lookup(var.security_group_rules[count.index], "port_range_min")}"
-  port_range_max    = "${lookup(var.security_group_rules[count.index], "port_range_max")}"
-  protocol          = "${lookup(var.security_group_rules[count.index], "protocol")}"
-  direction         = "${lookup(var.security_group_rules[count.index], "direction")}"
-  ethertype         = "${lookup(var.security_group_rules[count.index], "ethertype")}"
-  remote_ip_prefix  = "${lookup(var.security_group_rules[count.index], "remote_ip_prefix")}"
+  port_range_min    = "${lookup(var.instance_security_group_rules[count.index], "port_range_min")}"
+  port_range_max    = "${lookup(var.instance_security_group_rules[count.index], "port_range_max")}"
+  protocol          = "${lookup(var.instance_security_group_rules[count.index], "protocol")}"
+  direction         = "${lookup(var.instance_security_group_rules[count.index], "direction")}"
+  ethertype         = "${lookup(var.instance_security_group_rules[count.index], "ethertype")}"
+  remote_ip_prefix  = "${lookup(var.instance_security_group_rules[count.index], "remote_ip_prefix")}"
   security_group_id = "${element(openstack_networking_secgroup_v2.this.*.id, count.index)}"
 }
 
@@ -44,7 +44,7 @@ resource "openstack_compute_instance_v2" "this" {
   image_name      = "${data.openstack_images_image_v2.this.name}"
   flavor_id       = "${data.openstack_compute_flavor_v2.this.id}"
   key_pair        = "${var.keypair}"
-  security_groups = "${openstack_networking_secgroup_v2.this.*.name}"
+  security_groups = "${concat(openstack_networking_secgroup_v2.this.*.name, var.security_groups_to_associate)}"
 
   dynamic "network" {
     for_each = var.network_ids
@@ -53,6 +53,8 @@ resource "openstack_compute_instance_v2" "this" {
       uuid = network.value
     }
   }
+
+  metadata = "${var.metadata}"
 }
 
 # resource "openstack_compute_interface_attach_v2" "this" {

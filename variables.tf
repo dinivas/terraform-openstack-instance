@@ -25,23 +25,36 @@ variable "keypair" {
 }
 
 variable "network_ids" {
-  type        = list
+  type        = "list"
   default     = []
   description = "IDs of the networks to attach instance to"
 }
 
 variable "subnet_ids" {
-  type        = list
+  type        = "list"
   default     = []
   description = "IDs of the networks subnet to attach instance to"
 }
 
-variable "security_group_name" {
-  type= "string"
+variable "instance_security_group_name" {
+  type        = "string"
+  description = "Security group to create and associate to instance"
+  default     = ""
 }
 
-variable "security_group_rules" {
+variable "instance_security_group_rules" {
   type        = list(map(any))
   default     = []
   description = "The definition os security groups to associate to instance. Only one is allowed"
+}
+
+variable "security_groups_to_associate" {
+  type        = list(string)
+  default     = []
+  description = "List of existing security groups to associate to instance."
+}
+
+variable "metadata" {
+  description = "A map of metadata to add to all resources supporting it."
+  default     = {}
 }
