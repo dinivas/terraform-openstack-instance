@@ -8,14 +8,14 @@ data "openstack_images_image_v2" "this" {
 }
 
 resource "openstack_networking_secgroup_v2" "this" {
-  count = "${var.instance_security_group_name != "" ? 1 : 0}"
+  count = "${var.instance_security_group_name != "" ? var.enabled * 1 : 0}"
 
   name        = "${var.instance_security_group_name}"
   description = "${format("Instance %s %s %s", var.instance_name, var.instance_security_group_name, "security group")}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "this" {
-  count = "${ (var.instance_security_group_name != "" && length(var.instance_security_group_rules) > 0) ? 1 : 0}"
+  count = "${(var.instance_security_group_name != "" && length(var.instance_security_group_rules) > 0) ? var.enabled * 1 : 0}"
 
   port_range_min    = "${lookup(var.instance_security_group_rules[count.index], "port_range_min")}"
   port_range_max    = "${lookup(var.instance_security_group_rules[count.index], "port_range_max")}"
@@ -28,7 +28,7 @@ resource "openstack_networking_secgroup_rule_v2" "this" {
 
 # This trigger wait for subnet defined outside of this module to be created
 resource "null_resource" "network_subnet_found" {
-  count = "${length(var.subnet_ids)}"
+  count = "${length(var.subnet_ids) * var.enabled }"
 
   triggers = {
     subnet = "${var.subnet_ids[count.index][0]}"
@@ -36,7 +36,7 @@ resource "null_resource" "network_subnet_found" {
 }
 
 resource "openstack_compute_instance_v2" "this" {
-  count = "${var.instance_count}"
+  count = "${var.instance_count * var.enabled }"
 
   depends_on = ["null_resource.network_subnet_found"]
 

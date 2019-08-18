@@ -1,3 +1,8 @@
+variable "enabled" {
+  type    = "string"
+  default = "1"
+}
+
 variable "instance_name" {
   type        = "string"
   description = "The name (prefix) of the compute instance to create."
