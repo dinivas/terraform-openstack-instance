@@ -15,14 +15,14 @@ resource "openstack_networking_secgroup_v2" "this" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "this" {
-  count = "${(var.instance_security_group_name != "" && length(var.instance_security_group_rules) > 0) ? var.enabled * 1 : 0}"
+  count = "${(var.instance_security_group_name != "" && length(var.instance_security_group_rules) > 0) ? var.enabled * length(var.instance_security_group_rules) : 0}"
 
-  port_range_min    = "${lookup(var.instance_security_group_rules[count.index], "port_range_min")}"
-  port_range_max    = "${lookup(var.instance_security_group_rules[count.index], "port_range_max")}"
+  port_range_min    = "${lookup(var.instance_security_group_rules[count.index], "port_range_min", 0)}"
+  port_range_max    = "${lookup(var.instance_security_group_rules[count.index], "port_range_max", 0)}"
   protocol          = "${lookup(var.instance_security_group_rules[count.index], "protocol")}"
   direction         = "${lookup(var.instance_security_group_rules[count.index], "direction")}"
   ethertype         = "${lookup(var.instance_security_group_rules[count.index], "ethertype")}"
-  remote_ip_prefix  = "${lookup(var.instance_security_group_rules[count.index], "remote_ip_prefix")}"
+  remote_ip_prefix  = "${lookup(var.instance_security_group_rules[count.index], "remote_ip_prefix", "")}"
   security_group_id = "${element(openstack_networking_secgroup_v2.this.*.id, count.index)}"
 }
 
