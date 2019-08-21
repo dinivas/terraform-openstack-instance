@@ -3,6 +3,24 @@
 resource "openstack_compute_keypair_v2" "keypair" {
   name = "my-keypair"
 }
+
+
+module "network" {
+  source              = "github.com/dinivas/terraform-openstack-network"
+  network_name        = "my-network"
+  network_tags        = ["management", "dinivas"]
+  network_description = "My network description"
+
+  subnets = [
+    {
+      subnet_name       = "my-network-subnet"
+      subnet_cidr       = "10.10.11.0/24"
+      subnet_ip_version = 4
+      subnet_tags       = "management, dinivas"
+    }
+  ]
+}
+
 module "compute" {
   source                       = "../../"
   instance_name                = "BLUE"
@@ -10,8 +28,8 @@ module "compute" {
   image_name                   = "cirros"
   flavor_name                  = "m1.tiny"
   keypair                      = "${openstack_compute_keypair_v2.keypair.name}"
-  network_ids                  = ["${openstack_compute_keypair_v2.keypair.id}"]
-  subnet_ids                   = ["${module.mgmt_network.subnet_ids}"]
+  network_ids                  = ["${module.network.network_id}"]
+  subnet_ids                   = ["${module.network.subnet_ids}"]
   instance_security_group_name = "BLUE-sg"
   instance_security_group_rules = [
     {
@@ -22,4 +40,5 @@ module "compute" {
       port_range_max   = 22
       remote_ip_prefix = ""
   }]
+  enabled = "1"
 }
