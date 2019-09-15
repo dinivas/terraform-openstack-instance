@@ -29,6 +29,12 @@ variable "keypair" {
   description = "The name of the keypair to use"
 }
 
+variable "availability_zone" {
+  type        = "string"
+  description = "The availability zone"
+  default     = "null"
+}
+
 variable "network_ids" {
   type        = "list"
   default     = []

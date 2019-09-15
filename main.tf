@@ -59,6 +59,8 @@ resource "openstack_compute_instance_v2" "this" {
   }
 
   metadata = "${var.metadata}"
+
+  availability_zone = "${var.availability_zone}"
 }
 
 # resource "openstack_compute_interface_attach_v2" "this" {
