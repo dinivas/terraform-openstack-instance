@@ -32,7 +32,6 @@ variable "keypair" {
 variable "availability_zone" {
   type        = "string"
   description = "The availability zone"
-  default     = "null"
 }
 
 variable "network_ids" {
@@ -68,4 +67,10 @@ variable "security_groups_to_associate" {
 variable "metadata" {
   description = "A map of metadata to add to all resources supporting it."
   default     = {}
+}
+
+variable "user_data" {
+  type        = "string"
+  description = "User data to use for this instance"
+  default     = ""
 }

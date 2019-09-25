@@ -58,7 +58,8 @@ resource "openstack_compute_instance_v2" "this" {
     }
   }
 
-  metadata = "${var.metadata}"
+  metadata  = "${var.metadata}"
+  user_data = "${var.user_data}"
 
   availability_zone = "${var.availability_zone}"
 }
