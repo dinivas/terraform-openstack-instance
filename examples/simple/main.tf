@@ -14,7 +14,7 @@ module "network" {
   subnets = [
     {
       subnet_name       = "my-network-subnet"
-      subnet_cidr       = "10.10.11.0/24"
+      subnet_cidr       = "10.10.14.0/24"
       subnet_ip_version = 4
       subnet_tags       = "management, dinivas"
     }
@@ -24,7 +24,7 @@ module "network" {
 module "compute" {
   source                       = "../../"
   instance_name                = "BLUE"
-  instance_count               = 2
+  instance_count               = 1
   image_name                   = "cirros"
   flavor_name                  = "m1.tiny"
   keypair                      = "${openstack_compute_keypair_v2.keypair.name}"
@@ -41,4 +41,5 @@ module "compute" {
       remote_ip_prefix = ""
   }]
   enabled = "1"
+  availability_zone = "nova:node03"
 }
