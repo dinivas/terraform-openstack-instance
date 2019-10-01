@@ -35,7 +35,7 @@ resource "null_resource" "network_subnet_found" {
   count = "${length(var.subnet_ids) * var.enabled}"
 
   triggers = {
-    subnet = "${var.subnet_ids[count.index][0]}"
+    subnet = "${var.subnet_ids[count.index]}"
   }
 }
 
