@@ -1,3 +1,8 @@
+variable "enabled" {
+  type    = "string"
+  default = "1"
+}
+
 variable "instance_name" {
   type        = "string"
   description = "The name (prefix) of the compute instance to create."
@@ -22,6 +27,11 @@ variable "flavor_name" {
 variable "keypair" {
   type        = "string"
   description = "The name of the keypair to use"
+}
+
+variable "availability_zone" {
+  type        = "string"
+  description = "The availability zone"
 }
 
 variable "network_ids" {
@@ -57,4 +67,10 @@ variable "security_groups_to_associate" {
 variable "metadata" {
   description = "A map of metadata to add to all resources supporting it."
   default     = {}
+}
+
+variable "user_data" {
+  type        = "string"
+  description = "User data to use for this instance"
+  default     = ""
 }
