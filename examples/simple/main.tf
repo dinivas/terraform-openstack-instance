@@ -3,6 +3,23 @@
 resource "openstack_compute_keypair_v2" "keypair" {
   name = "my-keypair"
 }
+
+module "mgmt_network" {
+  #source              = "../terraform-os-network/"
+  source              = "github.com/dinivas/terraform-openstack-network"
+  network_name        = "test-mgmt"
+  network_tags        = ["test", "management", "dinivas"]
+  network_description = ""
+
+  subnets = [
+    {
+      subnet_name       = "test-mgmt-subnet"
+      subnet_cidr       = "10.10.17.1/24"
+      subnet_ip_version = 4
+      subnet_tags       = "test, management, dinivas"
+    }
+  ]
+}
 module "compute" {
   source                       = "../../"
   instance_name                = "BLUE"
