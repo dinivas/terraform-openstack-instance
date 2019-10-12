@@ -44,11 +44,12 @@ resource "openstack_compute_instance_v2" "this" {
 
   depends_on = ["null_resource.network_subnet_found"]
 
-  name            = "${var.instance_count > 1 ? format("%s-%s", var.instance_name, count.index) : var.instance_name}"
-  image_name      = "${data.openstack_images_image_v2.this.0.name}"
-  flavor_id       = "${data.openstack_compute_flavor_v2.this.0.id}"
-  key_pair        = "${var.keypair}"
-  security_groups = "${concat(openstack_networking_secgroup_v2.this.*.name, var.security_groups_to_associate)}"
+  name                = "${var.instance_count > 1 ? format("%s-%s", var.instance_name, count.index) : var.instance_name}"
+  image_name          = "${data.openstack_images_image_v2.this.0.name}"
+  flavor_id           = "${data.openstack_compute_flavor_v2.this.0.id}"
+  key_pair            = "${var.keypair}"
+  security_groups     = "${concat(openstack_networking_secgroup_v2.this.*.name, var.security_groups_to_associate)}"
+  stop_before_destroy = "${var.stop_before_destroy}"
 
   dynamic "network" {
     for_each = var.network_ids

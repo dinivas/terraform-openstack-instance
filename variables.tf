@@ -74,3 +74,7 @@ variable "user_data" {
   description = "User data to use for this instance"
   default     = ""
 }
+
+variable "stop_before_destroy" {
+  default = true
+}
