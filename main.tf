@@ -44,7 +44,7 @@ resource "openstack_compute_instance_v2" "this" {
 
   depends_on = ["null_resource.network_subnet_found"]
 
-  name                = "${var.instance_count > 1 ? format("%s-%s", var.instance_name, count.index) : var.instance_name}"
+  name                = "${format("%s-%s", var.instance_name, count.index)}"
   image_name          = "${data.openstack_images_image_v2.this.0.name}"
   flavor_id           = "${data.openstack_compute_flavor_v2.this.0.id}"
   key_pair            = "${var.keypair}"
@@ -63,6 +63,38 @@ resource "openstack_compute_instance_v2" "this" {
   user_data = "${var.user_data}"
 
   availability_zone = "${var.availability_zone}"
+}
+
+resource "null_resource" "instance_destroy_hook" {
+  count = "${var.execute_on_destroy_instance_script != "" ? var.instance_count * var.enabled : 0}"
+
+  depends_on = ["null_resource.network_subnet_found", "${element(openstack_compute_instance_v2.this.*.id, count.index)}"]
+
+  # Changes to any instance that requires destroy_hook
+  triggers = {
+    module_instance_id = "${element(openstack_compute_instance_v2.this.*.id, count.index)}"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "centos"
+    port        = 22
+    host        = "${element(openstack_compute_instance_v2.this.*.access_ip_v4, count.index)}"
+    private_key = "${lookup(var.ssh_via_bastion_config, "host_private_key")}"
+    agent       = false
+
+    bastion_host        = "${lookup(var.ssh_via_bastion_config, "bastion_host")}"
+    bastion_port        = 22
+    bastion_user        = "centos"
+    bastion_private_key = "${lookup(var.ssh_via_bastion_config, "bastion_private_key")}"
+  }
+
+  provisioner "remote-exec" {
+    when = "destroy"
+    inline = [
+      "${var.execute_on_destroy_instance_script}",
+    ]
+  }
 }
 
 # resource "openstack_compute_interface_attach_v2" "this" {

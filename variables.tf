@@ -78,3 +78,13 @@ variable "user_data" {
 variable "stop_before_destroy" {
   default = true
 }
+
+variable "execute_on_destroy_instance_script" {
+  type    = "string"
+  default = ""
+}
+
+variable "ssh_via_bastion_config" {
+  description = "config map used to connect via bastion ssh"
+  default = {}
+}
