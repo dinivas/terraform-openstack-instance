@@ -68,7 +68,7 @@ resource "openstack_compute_instance_v2" "this" {
     type        = "ssh"
     user        = "centos"
     port        = 22
-    host        = "${element(openstack_compute_instance_v2.this.*.access_ip_v4, count.index)}"
+    host        = "${self.access_ip_v4}"
     private_key = "${lookup(var.ssh_via_bastion_config, "host_private_key")}"
     agent       = false
 
@@ -86,22 +86,3 @@ resource "openstack_compute_instance_v2" "this" {
     on_failure = "continue"
   }
 }
-
-# resource "null_resource" "instance_destroy_hook" {
-#   count = "${var.execute_on_destroy_instance_script != "" ? var.instance_count * var.enabled : 0}"
-
-#   depends_on = ["null_resource.network_subnet_found", "${element(openstack_compute_instance_v2.this.*.id, count.index)}"]
-
-#   # Changes to any instance that requires destroy_hook
-#   triggers = {
-#     module_instance_id = "${element(openstack_compute_instance_v2.this.*.id, count.index)}"
-#   }
-# }
-
-# resource "openstack_compute_interface_attach_v2" "this" {
-#   count = "${var.instance_count}"
-
-
-#   instance_id = "${openstack_compute_instance_v2.this.*.id[count.index]}"
-#   network_id     = "${var.network_id}"
-# }
